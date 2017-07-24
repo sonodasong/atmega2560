@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "atmega2560_ucos-ii_fatfs", "atmega2560_ucos-ii_fatfs\atmega2560_ucos-ii_fatfs.cproj", "{40D69C3C-16B2-4628-826B-E3114B819360}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{40D69C3C-16B2-4628-826B-E3114B819360}.Debug|AVR.ActiveCfg = Debug|AVR
+		{40D69C3C-16B2-4628-826B-E3114B819360}.Debug|AVR.Build.0 = Debug|AVR
+		{40D69C3C-16B2-4628-826B-E3114B819360}.Release|AVR.ActiveCfg = Release|AVR
+		{40D69C3C-16B2-4628-826B-E3114B819360}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
