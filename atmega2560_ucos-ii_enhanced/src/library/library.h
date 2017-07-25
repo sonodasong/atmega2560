@@ -3,8 +3,8 @@
 
 #include "define.h"
 
-#include "util.h"
-
 #include "usart0.h"
+
+#include "util.h"
 
 #endif
