@@ -8,5 +8,8 @@ void disablePullup(void);
 void ledInit(void);
 void ledOn(void);
 void ledOff(void);
+void probeInit(void);
+void probeOn(void);
+void probeOff(void);
 
 #endif
