@@ -39,9 +39,10 @@ void fatfsTask(void *pdata)
 	(void)pdata;
 	f_mount(&FatFs, "", 0);
 	while (1) {
-		f_open(&fil, "test.txt", FA_READ | FA_WRITE);
 		strBufClr(line, BUFF_SIZE);
+		f_open(&fil, "test.txt", FA_READ);
 		f_read(&fil, line, BUFF_SIZE - 1, &rc);
+		f_close(&fil);
 		line[rc] = '\0';
 		usart0Printf("%s\r\n", line);
 		usart0Read(&str);
@@ -49,7 +50,7 @@ void fatfsTask(void *pdata)
 		if (i < rc) {
 			i = rc;
 		}
-		f_lseek(&fil, 0);
+		f_open(&fil, "test.txt", FA_WRITE);
 		f_write(&fil, line, i, &rc);
 		f_close(&fil);
 	}
