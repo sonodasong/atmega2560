@@ -36,9 +36,6 @@
 static volatile
 DSTATUS Stat = STA_NOINIT;	/* Disk status */
 
-static volatile
-UINT Timer1, Timer2;		/* ?Hz decrement timer */
-
 static
 BYTE CardType;				/* Card type flags (b0:MMC, b1:SDv1, b2:SDv2, b3:Block addressing) */
 
@@ -55,13 +52,12 @@ int wait_ready (	/* 1:Ready, 0:Timeout */
 	BYTE d;
 
 
-	Timer2 = wt / (1000 / OS_TICKS_PER_SEC);
-	do
+	wt /= (1000 / OS_TICKS_PER_SEC);
+	do {
 		d = xchg_spi(0xFF);
-
-		/* This loop takes a time. Insert rot_rdq() here for multitask envilonment. */
-
-	while (d != 0xFF && Timer2);
+		OSTimeDly(1);
+		wt--;
+	} while (d != 0xFF && wt);
 
 	return (d == 0xFF) ? 1 : 0;
 }
@@ -77,7 +73,6 @@ void deselect (void)
 	CS_HIGH();		/* Set CS# high */
 	xchg_spi(0xFF);	/* Dummy clock (force DO hi-z for multiple slave SPI) */
 }
-
 
 
 /*-----------------------------------------------------------------------*/
@@ -97,7 +92,6 @@ int select (void)	/* 1:Successful, 0:Timeout */
 }
 
 
-
 /*-----------------------------------------------------------------------*/
 /* Receive a data packet from MMC                                        */
 /*-----------------------------------------------------------------------*/
@@ -109,12 +103,15 @@ int rcvr_datablock (
 )
 {
 	BYTE token;
+	UINT wt;
 
 
-	Timer1 = 200 / (1000 / OS_TICKS_PER_SEC);
+	wt = 200 / (1000 / OS_TICKS_PER_SEC);
 	do {							/* Wait for data packet in timeout of 200ms */
 		token = xchg_spi(0xFF);
-	} while ((token == 0xFF) && Timer1);
+		OSTimeDly(1);
+		wt--;
+	} while ((token == 0xFF) && wt);
 	if (token != 0xFE) return 0;	/* If not valid data token, retutn with error */
 
 	rcvr_spi_multi(buff, btr);		/* Receive the data block into buffer */
@@ -123,7 +120,6 @@ int rcvr_datablock (
 
 	return 1;						/* Return with success */
 }
-
 
 
 /*-----------------------------------------------------------------------*/
@@ -155,7 +151,6 @@ int xmit_datablock (
 	/* Busy check is done at next transmission */
 }
 #endif
-
 
 
 /*-----------------------------------------------------------------------*/
@@ -219,6 +214,7 @@ BYTE send_cmd (		/* Returns R1 resp (bit7==1:Send failed) */
 DSTATUS mmc_disk_initialize (void)
 {
 	BYTE n, cmd, ty, ocr[4];
+	UINT wt;
 
 
 	power_on();								/* Turn on the socket power */
@@ -230,12 +226,15 @@ DSTATUS mmc_disk_initialize (void)
 
 	ty = 0;
 	if (send_cmd(CMD0, 0) == 1) {			/* Put the card SPI mode */
-		Timer1 = 1000 / (1000 / OS_TICKS_PER_SEC);				/* Initialization timeout of 1000 msec */
+		wt = 1000 / (1000 / OS_TICKS_PER_SEC);				/* Initialization timeout of 1000 msec */
 		if (send_cmd(CMD8, 0x1AA) == 1) {	/* Is the card SDv2? */
 			for (n = 0; n < 4; n++) ocr[n] = xchg_spi(0xFF);	/* Get trailing return value of R7 resp */
 			if (ocr[2] == 0x01 && ocr[3] == 0xAA) {				/* The card can work at vdd range of 2.7-3.6V */
-				while (Timer1 && send_cmd(ACMD41, 1UL << 30));	/* Wait for leaving idle state (ACMD41 with HCS bit) */
-				if (Timer1 && send_cmd(CMD58, 0) == 0) {		/* Check CCS bit in the OCR */
+				while (wt && send_cmd(ACMD41, 1UL << 30)) {		/* Wait for leaving idle state (ACMD41 with HCS bit) */
+					OSTimeDly(1);
+					wt--;
+				}
+				if (wt && send_cmd(CMD58, 0) == 0) {			/* Check CCS bit in the OCR */
 					for (n = 0; n < 4; n++) ocr[n] = xchg_spi(0xFF);
 					ty = (ocr[0] & 0x40) ? CT_SD2 | CT_BLOCK : CT_SD2;	/* Check if the card is SDv2 */
 				}
@@ -246,8 +245,11 @@ DSTATUS mmc_disk_initialize (void)
 			} else {
 				ty = CT_MMC; cmd = CMD1;	/* MMCv3 */
 			}
-			while (Timer1 && send_cmd(cmd, 0));			/* Wait for leaving idle state */
-			if (!Timer1 || send_cmd(CMD16, 512) != 0)	/* Set R/W block length to 512 */
+			while (wt && send_cmd(cmd, 0)) {			/* Wait for leaving idle state */
+				OSTimeDly(1);
+				wt--;
+			}
+			if (!wt || send_cmd(CMD16, 512) != 0)	/* Set R/W block length to 512 */
 				ty = 0;
 		}
 	}
@@ -363,7 +365,7 @@ DRESULT mmc_disk_ioctl (
 #if _USE_ISDIO
 	SDIO_CTRL *sdi;
 	BYTE rc, *bp;
-	UINT dc;
+	UINT dc, wt;
 #endif
 
 	if (Stat & STA_NOINIT) return RES_NOTRDY;
@@ -472,7 +474,12 @@ DRESULT mmc_disk_ioctl (
 	case ISDIO_READ:
 		sdi = buff;
 		if (send_cmd(CMD48, 0x80000000 | (DWORD)sdi->func << 28 | (DWORD)sdi->addr << 9 | ((sdi->ndata - 1) & 0x1FF)) == 0) {
-			for (Timer1 = 1000 / (1000 / OS_TICKS_PER_SEC); (rc = xchg_spi(0xFF)) == 0xFF && Timer1; ) ;
+			wt = 1000 / (1000 / OS_TICKS_PER_SEC);
+			do {
+				rc = xchg_spi(0xFF);
+				OSTimeDly(1);
+				wt--;
+			} while (rc == 0xFF && wt);
 			if (rc == 0xFE) {
 				for (bp = sdi->data, dc = sdi->ndata; dc; dc--) *bp++ = xchg_spi(0xFF);
 				for (dc = 514 - sdi->ndata; dc; dc--) xchg_spi(0xFF);
@@ -511,34 +518,3 @@ DRESULT mmc_disk_ioctl (
 	return res;
 }
 #endif
-
-
-/*-----------------------------------------------------------------------*/
-/* Device Timer Interrupt Procedure                                      */
-/*-----------------------------------------------------------------------*/
-/* This function must be called in period of 10ms                        */
-
-void mmc_disk_timerproc (void)
-{
-	BYTE n, s;
-
-
-	n = Timer1;				/* 100Hz decrement timer */
-	if (n) Timer1 = --n;
-	n = Timer2;
-	if (n) Timer2 = --n;
-
-	s = Stat;
-
-	if (MMC_WP()) {			/* Write protected */
-		s |= STA_PROTECT;
-	} else {				/* Write enabled */
-		s &= ~STA_PROTECT;
-	}
-	if (MMC_CD()) {			/* Card inserted */
-		s &= ~STA_NODISK;
-	} else {				/* Socket empty */
-		s |= (STA_NODISK | STA_NOINIT);
-	}
-	Stat = s;				/* Update MMC status */
-}

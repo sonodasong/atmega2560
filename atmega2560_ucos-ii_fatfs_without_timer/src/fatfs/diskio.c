@@ -143,21 +143,3 @@ DRESULT disk_ioctl (
 }
 #endif
 
-
-/*-----------------------------------------------------------------------*/
-/* Timer driven procedure                                                */
-/*-----------------------------------------------------------------------*/
-
-
-void disk_timerproc (void)
-{
-#ifdef DRV_CFC
-	cf_disk_timerproc();
-#endif
-#ifdef DRV_MMC
-	mmc_disk_timerproc();
-#endif
-}
-
-
-

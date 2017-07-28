@@ -6,8 +6,6 @@
 
 #define CS_LOW()					PORTG &= rex(5)
 #define CS_HIGH()					PORTG |= ex(5)
-#define MMC_CD()					TRUE
-#define MMC_WP()					FALSE
 #define FCLK_SLOW()					spiClockSlow()
 #define FCLK_FAST()					spiClockFast()
 #define rcvr_spi_multi(p, cnt)		spiBufR(p, cnt, 0xFF)

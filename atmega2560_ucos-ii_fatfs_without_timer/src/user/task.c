@@ -26,27 +26,9 @@ void serial(void *pdata)
 	}
 }
 
-void fatfsTask(void *pdata)
-{
-	FATFS FatFs;
-	FIL fil;
-	char line[100];
-
-	(void)pdata;
-	f_mount(&FatFs, "", 0);
-	f_open(&fil, "test.txt", FA_READ);
-	while (f_gets(line, sizeof line, &fil)) {
-		usart0Print(line);
-	}
-	f_close(&fil);
-	while (1) {
-		OSTimeDly(250);
-	}
-}
-
 #define BUFF_SIZE		16
 
-void fatfsTask1(void *pdata)
+void fatfsTask(void *pdata)
 {
 	FATFS FatFs;
 	FIL fil;
@@ -70,16 +52,5 @@ void fatfsTask1(void *pdata)
 		f_lseek(&fil, 0);
 		f_write(&fil, line, i, &rc);
 		f_close(&fil);
-	}
-}
-
-extern void disk_timerproc (void);
-
-void fatfsTimerTask(void *pdata)
-{
-	(void)pdata;
-	while (1) {
-		disk_timerproc();
-		OSTimeDly(1);
 	}
 }
