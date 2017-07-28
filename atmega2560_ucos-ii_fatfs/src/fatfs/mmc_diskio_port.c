@@ -19,36 +19,3 @@ BYTE xchg_spi(BYTE dat)
 	spiBufWR(&dat, &dat, 1);
 	return dat;
 }
-
-/*
-int wait_ready(UINT wt)
-{
-	BYTE d;
-
-	wt = wt / (1000 / OS_TICKS_PER_SEC);
-	do {
-		d = xchg_spi(0xFF);
-		OSTimeDly(1);
-		wt--;
-	} while (d != 0xFF && wt);
-	return (d == 0xFF) ? 1 : 0;
-}
-
-int rcvr_datablock(BYTE *buff, UINT btr)
-{
-	BYTE token;
-	UINT wt;
-
-	wt = 200 / (1000 / OS_TICKS_PER_SEC);
-	do {
-		token = xchg_spi(0xFF);
-		OSTimeDly(1);
-		wt--;
-	} while ((token == 0xFF) && wt);
-	if (token != 0xFE) return 0;
-	rcvr_spi_multi(buff, btr);
-	xchg_spi(0xFF);
-	xchg_spi(0xFF);
-	return 1;
-}
-*/

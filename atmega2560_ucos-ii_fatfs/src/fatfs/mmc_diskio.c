@@ -79,7 +79,6 @@ void deselect (void)
 }
 
 
-
 /*-----------------------------------------------------------------------*/
 /* Select the card and wait for ready                                    */
 /*-----------------------------------------------------------------------*/
@@ -95,7 +94,6 @@ int select (void)	/* 1:Successful, 0:Timeout */
 	deselect();		/* Timeout */
 	return 0;
 }
-
 
 
 /*-----------------------------------------------------------------------*/
@@ -123,7 +121,6 @@ int rcvr_datablock (
 
 	return 1;						/* Return with success */
 }
-
 
 
 /*-----------------------------------------------------------------------*/
@@ -155,7 +152,6 @@ int xmit_datablock (
 	/* Busy check is done at next transmission */
 }
 #endif
-
 
 
 /*-----------------------------------------------------------------------*/
@@ -520,7 +516,8 @@ DRESULT mmc_disk_ioctl (
 
 void mmc_disk_timerproc (void)
 {
-	BYTE n, s;
+	UINT n;
+	BYTE s;
 
 
 	n = Timer1;				/* 100Hz decrement timer */

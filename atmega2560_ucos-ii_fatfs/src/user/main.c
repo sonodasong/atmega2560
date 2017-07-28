@@ -1,6 +1,6 @@
 #include "user.h"
 
-static OS_STK stack0[4096];
+static OS_STK stack0[1536];
 static OS_STK stack1[128];
 static OS_STK stack2[128];
 
@@ -34,11 +34,11 @@ int main(void)
 	usart0Init();
 
 	ledInit();
-	//probeInit();
 
-	OSTaskCreate(fatfsTask1, (void *)0, &stack2[4095], 0);
+	/* minimun stack size roughly 1280 */
+	OSTaskCreate(fatfsTask, (void *)0, &stack0[1535], 0);
 	OSTaskCreate(fatfsTimerTask, (void *)0, &stack1[127], 1);
-	OSTaskCreate(blink, (void *)0, &stack0[127], 2);
+	OSTaskCreate(blink, (void *)0, &stack2[127], 2);
 
 	OSStart();
 
