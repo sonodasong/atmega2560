@@ -80,6 +80,6 @@ void fatfsTimerTask(void *pdata)
 	(void)pdata;
 	while (1) {
 		disk_timerproc();
-		OSTimeDly(2);
+		OSTimeDly(1);
 	}
 }
