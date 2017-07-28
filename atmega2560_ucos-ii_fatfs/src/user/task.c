@@ -61,8 +61,7 @@ void fatfsTask1(void *pdata)
 		strBufClr(line, BUFF_SIZE);
 		f_read(&fil, line, BUFF_SIZE - 1, &rc);
 		line[rc] = '\0';
-		usart0Print(line);
-		usart0Print("\r\n");
+		usart0Printf("%s\r\n", line);
 		usart0Read(&str);
 		i = strCpy(str, line, BUFF_SIZE - 1);
 		if (i < rc) {
