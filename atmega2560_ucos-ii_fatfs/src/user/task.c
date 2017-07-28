@@ -26,30 +26,16 @@ void serial(void *pdata)
 	}
 }
 
-extern void disk_timerproc (void);
-
 void fatfsTask(void *pdata)
 {
 	FATFS FatFs;
-	/* File object */
 	FIL fil;
-	/* Line buffer */
 	char line[100];
-	/* FatFs return code */
-	FRESULT fr;
 
 	(void)pdata;
-
-	/* Register work area to the default drive */
-	fr = f_mount(&FatFs, "", 0);
-	//usart0Hex8(fr);
-
-	/* Open a text file */
-	fr = f_open(&fil, "test.txt", FA_READ);
-
-	/* Read all lines and display it */
+	f_mount(&FatFs, "", 0);
+	f_open(&fil, "test.txt", FA_READ);
 	while (f_gets(line, sizeof line, &fil)) {
-		ledOn();
 		usart0Print(line);
 	}
 	f_close(&fil);
@@ -57,6 +43,39 @@ void fatfsTask(void *pdata)
 		OSTimeDly(250);
 	}
 }
+
+#define BUFF_SIZE		16
+
+void fatfsTask1(void *pdata)
+{
+	FATFS FatFs;
+	FIL fil;
+	char line[BUFF_SIZE];
+	UINT rc, i;
+	char *str;
+
+	(void)pdata;
+	f_mount(&FatFs, "", 0);
+	while (1) {
+		f_open(&fil, "test.txt", FA_READ | FA_WRITE);
+		strBufClr(line, BUFF_SIZE);
+		f_read(&fil, line, BUFF_SIZE - 1, &rc);
+		line[rc] = '\0';
+		usart0Print(line);
+		usart0Print("\r\n");
+		usart0Read(&str);
+		i = strCpy(str, line, BUFF_SIZE - 1);
+		if (i < rc) {
+			i = rc;
+		}
+		f_lseek(&fil, 0);
+		f_write(&fil, line, i, &rc);
+		f_close(&fil);
+		ledOn();
+	}
+}
+
+extern void disk_timerproc (void);
 
 void fatfsTimerTask(void *pdata)
 {

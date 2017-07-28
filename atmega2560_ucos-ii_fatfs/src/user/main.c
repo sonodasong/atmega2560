@@ -2,7 +2,7 @@
 
 //static OS_STK stack0[128];
 static OS_STK stack1[128];
-static OS_STK stack2[2048];
+static OS_STK stack2[4096];
 
 static void tickInit(void)
 {
@@ -38,7 +38,7 @@ int main(void)
 
 	//OSTaskCreate(blink, (void *)0, &stack0[127], 0);
 	OSTaskCreate(fatfsTimerTask, (void *)0, &stack1[127], 1);
-	OSTaskCreate(fatfsTask, (void *)0, &stack2[2047], 2);
+	OSTaskCreate(fatfsTask1, (void *)0, &stack2[4095], 2);
 
 	OSStart();
 

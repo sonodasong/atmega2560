@@ -10,6 +10,26 @@ void disablePullup(void)
 	MCUCR |= ex(PUD);
 }
 
+void strBufClr(char *buf, uint8 size)
+{
+	while (size != 0) {
+		buf[size - 1] = '\0';
+		size--;
+	}
+}
+
+uint8 strCpy(char *src, char *dst, uint8 size)
+{
+	uint8 i;
+
+	i = 0;
+	while (src[i] != '\0' && i < size) {
+		dst[i] = src[i];
+		i++;
+	}
+	return i;
+}
+
 void ledInit(void)
 {
 	DDRB |= ex(7);

@@ -5,6 +5,8 @@
 
 void enablePullup(void);
 void disablePullup(void);
+void strBufClr(char *buf, uint8 size);
+uint8 strCpy(char *src, char *dst, uint8 size);
 void ledInit(void);
 void ledOn(void);
 void ledOff(void);
