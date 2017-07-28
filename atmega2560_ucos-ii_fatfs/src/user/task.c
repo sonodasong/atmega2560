@@ -70,7 +70,6 @@ void fatfsTask1(void *pdata)
 		f_lseek(&fil, 0);
 		f_write(&fil, line, i, &rc);
 		f_close(&fil);
-		ledOn();
 	}
 }
 

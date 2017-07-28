@@ -1,8 +1,8 @@
 #include "user.h"
 
-//static OS_STK stack0[128];
+static OS_STK stack0[4096];
 static OS_STK stack1[128];
-static OS_STK stack2[4096];
+static OS_STK stack2[128];
 
 static void tickInit(void)
 {
@@ -34,11 +34,11 @@ int main(void)
 	usart0Init();
 
 	ledInit();
-	probeInit();
+	//probeInit();
 
-	//OSTaskCreate(blink, (void *)0, &stack0[127], 0);
+	OSTaskCreate(fatfsTask1, (void *)0, &stack2[4095], 0);
 	OSTaskCreate(fatfsTimerTask, (void *)0, &stack1[127], 1);
-	OSTaskCreate(fatfsTask1, (void *)0, &stack2[4095], 2);
+	OSTaskCreate(blink, (void *)0, &stack0[127], 2);
 
 	OSStart();
 

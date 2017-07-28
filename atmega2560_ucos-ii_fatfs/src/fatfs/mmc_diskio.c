@@ -221,11 +221,10 @@ DSTATUS mmc_disk_initialize (void)
 	BYTE n, cmd, ty, ocr[4];
 
 
-	power_off();						/* Turn off the socket power to reset the card */
-	OSTimeDly(100 / (1000 /OS_TICKS_PER_SEC));	/* Wait for 100ms */
-	if (Stat & STA_NODISK) return Stat;	/* No card in the socket? */
+	power_on();								/* Turn on the socket power */
 
-	power_on();							/* Turn on the socket power */
+	if (Stat & STA_NODISK) return Stat;		/* No card in the socket? */
+
 	FCLK_SLOW();
 	for (n = 10; n; n--) xchg_spi(0xFF);	/* 80 dummy clocks */
 

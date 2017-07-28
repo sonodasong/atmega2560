@@ -7,15 +7,11 @@ void power_on(void)
 	/* CS pin configuration */
 	PORTG |= ex(5);
 	DDRG |= ex(5);
+	OSTimeDly(100 / (1000 /OS_TICKS_PER_SEC));
 }
 
 void power_off(void)
 {
-	/* disable pull-up resistor for MISO */
-	PORTB &= rex(3);
-	/* restore CS pin configuration */
-	DDRG &= rex(5);
-	PORTG &= rex(5);
 }
 
 BYTE xchg_spi(BYTE dat)
