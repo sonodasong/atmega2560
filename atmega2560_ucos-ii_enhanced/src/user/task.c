@@ -22,6 +22,6 @@ void serial(void *pdata)
 	(void)pdata;
 	while (1) {
 		usart0Read(&str);
-		usart0Print(str);
+		usart0Printf("%s\r\n", str);
 	}
 }
