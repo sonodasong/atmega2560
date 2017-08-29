@@ -13,18 +13,18 @@ extern  "C" {
 
 /*******************************************************************************************************/
 
-typedef unsigned char	BOOLEAN;
-typedef unsigned char	INT8U;
-typedef signed char		INT8S;
-typedef unsigned int	INT16U;
-typedef signed int		INT16S;
-typedef unsigned long	INT32U;
-typedef signed long		INT32S;
-typedef float			FP32;
-typedef double			FP64;
+typedef unsigned char		BOOLEAN;
+typedef unsigned char		INT8U;
+typedef signed char			INT8S;
+typedef unsigned short		INT16U;
+typedef signed short		INT16S;
+typedef unsigned long		INT32U;
+typedef signed long			INT32S;
+typedef float				FP32;
+typedef double				FP64;
 
-typedef INT8U			OS_STK;
-typedef INT8U			OS_CPU_SR;
+typedef INT8U				OS_STK;
+typedef INT8U				OS_CPU_SR;
 
 /*******************************************************************************************************/
 
@@ -38,12 +38,12 @@ void CPUSetSR(OS_CPU_SR  cpu_sr);
 
 /*******************************************************************************************************/
 
-#define OS_STK_GROWTH	1
+#define OS_STK_GROWTH		1
 
 /*******************************************************************************************************/
 
-#define OS_TASK_SW()	OSCtxSw()
-#define OSIntCtxSw()	OSCtxSw()
+#define OS_TASK_SW()		OSCtxSw()
+#define OSIntCtxSw()		OSCtxSw()
 
 /*******************************************************************************************************/
 
