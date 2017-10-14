@@ -10,7 +10,7 @@ void disablePullup(void)
 	MCUCR |= ex(PUD);
 }
 
-void strBufClr(char *buf, uint8 size)
+void strClr(char *buf, uint8 size)
 {
 	while (size != 0) {
 		buf[size - 1] = '\0';

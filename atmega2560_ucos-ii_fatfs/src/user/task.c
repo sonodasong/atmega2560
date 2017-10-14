@@ -39,7 +39,7 @@ void fatfsTask(void *pdata)
 	(void)pdata;
 	f_mount(&FatFs, "", 0);
 	while (1) {
-		strBufClr(line, BUFF_SIZE);
+		strClr(line, BUFF_SIZE);
 		f_open(&fil, "test.txt", FA_READ);
 		f_read(&fil, line, BUFF_SIZE - 1, &rc);
 		f_close(&fil);
