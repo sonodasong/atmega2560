@@ -1,12 +1,11 @@
 #include "spi.h"
 
-static uint8 *spiTxBuf;
 static uint8 *spiRxBuf;
+static uint8 *spiTxBuf;
 static uint16 spiSize;
 static uint16 spiCnt;
 static uint8 spiFill;
 static uint8 spiFirstByte;
-
 static OS_EVENT *spiRdy;
 
 static void (*spiHandlerPtr)(void);
@@ -63,8 +62,8 @@ INT8U spiBufWR(uint8 *txBuf, uint8 *rxBuf, uint16 size)
 {
 	INT8U err;
 
-	spiTxBuf = txBuf;
 	spiRxBuf = rxBuf;
+	spiTxBuf = txBuf;
 	spiSize = size;
 	spiCnt = 0;
 	spiHandlerPtr = spiBufWRHandler;
