@@ -6,7 +6,7 @@ void power_on(void)
 	PORTB |= ex(3);
 
 	/* CS pin configuration */
-	PORTG |= ex(5);
+	CS_HIGH();
 	DDRG |= ex(5);
 
 	OSTimeDly(100 / (1000 /OS_TICKS_PER_SEC));
