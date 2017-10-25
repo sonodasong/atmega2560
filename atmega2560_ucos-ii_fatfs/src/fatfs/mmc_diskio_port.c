@@ -18,6 +18,6 @@ void power_off(void)
 
 BYTE xchg_spi(BYTE dat)
 {
-	spiBufWR(&dat, &dat, 1);
+	spiBufRw(&dat, &dat, 1);
 	return dat;
 }

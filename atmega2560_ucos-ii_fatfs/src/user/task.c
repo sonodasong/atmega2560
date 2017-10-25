@@ -64,7 +64,7 @@ void fatfsTask(void *pdata)
 
 void fatfsTimerTask(void *pdata)
 {
-	extern void disk_timerproc (void);
+	extern void disk_timerproc(void);
 
 	(void)pdata;
 	while (1) {
